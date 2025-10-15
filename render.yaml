@@ -1,0 +1,28 @@
+services:
+  # Backend Service
+  - type: web
+    name: spotify-backend
+    env: node
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
+
+  # Frontend Service
+  - type: static
+    name: spotify-frontend
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: spotify-backend
+          property: host
